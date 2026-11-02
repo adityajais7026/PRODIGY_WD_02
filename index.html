@@ -33,6 +33,36 @@
           <span class="status__dot" aria-hidden="true"></span>
           <span class="status__text" id="statusText">Ready</span>
         </span>
+
+        <div class="statusbar-actions">
+          <button type="button" class="icon-btn" id="themeBtn" aria-label="Switch to light theme" aria-pressed="false">
+            <svg class="icon-btn__icon icon-btn__icon--sun" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+              <path fill="currentColor" d="M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Zm0-6.5h.01m-.01 22h.01M12 1v2m0 18v2M1 12h2m18 0h2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M19.8 4.2l-1.4 1.4M5.6 18.4l-1.4 1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+              <circle cx="12" cy="12" r="4" fill="currentColor" />
+            </svg>
+            <svg class="icon-btn__icon icon-btn__icon--moon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" hidden>
+              <path fill="currentColor" d="M20.8 13.6A8.5 8.5 0 0 1 10.4 3.2 8.5 8.5 0 1 0 20.8 13.6Z" />
+            </svg>
+          </button>
+
+          <div class="menu-anchor">
+            <button type="button" class="icon-btn" id="menuBtn" aria-label="Open settings menu" aria-haspopup="true" aria-expanded="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.9" fill="currentColor" />
+                <circle cx="12" cy="12" r="1.9" fill="currentColor" />
+                <circle cx="19" cy="12" r="1.9" fill="currentColor" />
+              </svg>
+            </button>
+
+            <!-- Settings / More menu -->
+            <div class="menu" id="settingsMenu" role="menu" aria-label="Settings" hidden>
+              <span class="menu__label">Data · stored locally</span>
+              <button type="button" class="menu__item" id="menuThemeItem" role="menuitem">Switch theme</button>
+              <button type="button" class="menu__item menu__item--danger" id="clearDataBtn" role="menuitem">Clear saved data</button>
+              <p class="menu__note">Your session and theme are saved in this browser only. Clearing saved data removes only this app's entries and resets the UI.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="timer" id="timer" role="timer" aria-label="Elapsed time">
@@ -60,11 +90,39 @@
       </div>
     </section>
 
+    <!-- Lap statistics -->
+    <section class="stats" aria-label="Lap statistics">
+      <article class="stat">
+        <span class="stat__label">Total laps</span>
+        <span class="stat__value" id="statTotal">0</span>
+      </article>
+      <article class="stat">
+        <span class="stat__label">Average</span>
+        <span class="stat__value" id="statAvg">—</span>
+      </article>
+      <article class="stat stat--fastest">
+        <span class="stat__label">Fastest</span>
+        <span class="stat__value" id="statFastest">—</span>
+      </article>
+      <article class="stat stat--slowest">
+        <span class="stat__label">Slowest</span>
+        <span class="stat__value" id="statSlowest">—</span>
+      </article>
+    </section>
+
     <!-- Lap history -->
     <section class="laps" aria-label="Lap history">
+      <div class="laps__toolbar">
+        <span class="laps__title">Laps</span>
+        <div class="laps__actions">
+          <button type="button" class="btn btn--mini" id="exportLapsBtn" disabled title="Download all laps as CSV">Export CSV</button>
+          <button type="button" class="btn btn--mini" id="clearLapsBtn" disabled title="Delete all lap records">Clear laps</button>
+        </div>
+      </div>
       <div class="laps__head" aria-hidden="true">
         <span>Lap</span>
         <span>Lap time</span>
+        <span>vs prev</span>
         <span>Total</span>
       </div>
       <div class="laps__scroller" tabindex="0">
@@ -77,6 +135,42 @@
       <p><kbd>Space</kbd> start / pause / resume · <kbd>L</kbd> lap · <kbd>R</kbd> reset</p>
     </footer>
   </main>
+
+  <!-- Session summary modal -->
+  <div class="overlay" id="summaryOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+      <header class="modal__head">
+        <h2 class="modal__title" id="summaryTitle">Session summary</h2>
+        <button type="button" class="icon-btn modal__close" id="summaryClose" aria-label="Close session summary">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" />
+          </svg>
+        </button>
+      </header>
+      <dl class="modal__grid">
+        <div class="modal__row"><dt>Total time</dt><dd id="summaryTotal">—</dd></div>
+        <div class="modal__row"><dt>Laps</dt><dd id="summaryLaps">—</dd></div>
+        <div class="modal__row modal__row--fastest"><dt>Fastest lap</dt><dd id="summaryFastest">—</dd></div>
+        <div class="modal__row modal__row--slowest"><dt>Slowest lap</dt><dd id="summarySlowest">—</dd></div>
+        <div class="modal__row"><dt>Average lap</dt><dd id="summaryAvg">—</dd></div>
+      </dl>
+      <button type="button" class="btn btn--primary modal__cta" id="summaryOk">Close</button>
+    </div>
+  </div>
+
+  <!-- Generic confirm modal -->
+  <div class="overlay" id="confirmOverlay" hidden>
+    <div class="modal modal--confirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <header class="modal__head">
+        <h2 class="modal__title" id="confirmTitle">Confirm</h2>
+      </header>
+      <p class="modal__text" id="confirmMessage"></p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost modal__cta" id="confirmCancel">Cancel</button>
+        <button type="button" class="btn btn--danger modal__cta" id="confirmYes">Clear</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
