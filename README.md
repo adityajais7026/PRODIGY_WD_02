@@ -1,5 +1,7 @@
 # ⏱️ Prodigy Infotech — Web Development Internship · Task 02
 
+🔗 **Live Demo:** https://adityajais7026.github.io/PRODIGY_WD_02/
+
 ## Stopwatch Web Application
 
 A premium, modern stopwatch built with **pure HTML5, CSS3 and vanilla JavaScript** — no frameworks, no libraries. It features timestamp-based timing (via `performance.now()`) so the elapsed time stays accurate even after pause/resume, tab throttling or browser delays, plus full lap analysis with fastest/slowest highlighting and lap-to-lap comparison, a session summary on reset, CSV export, a dark/light theme and automatic localStorage session persistence — all inside a responsive, accessible UI.
